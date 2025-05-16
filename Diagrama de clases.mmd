@@ -1,0 +1,87 @@
+classDiagram
+    class Usuario {
+        #numeroDocumento: String
+        #antiguedadPlataformaMeses: int
+        #puntuacion: float
+        #credenciales: Object
+        +iniciarSesion(documento, password): boolean
+        +obtenerInformacion(): String
+    }
+
+    class Anfitrion {
+        <<Usuario>>
+        -alojamientosAdministrados: List~Alojamiento~
+        +agregarAlojamiento(nuevoAlojamiento: Alojamiento): void
+        +consultarReservacionesActivas(fechaInicio: Date, fechaFin: Date): List~Reserva~
+        +anularReservacionAnfitrion(codigoReservacion: String): boolean
+    }
+
+    class Huesped {
+        <<Usuario>>
+        -reservasRealizadas: List~Reserva~
+        +buscarAlojamientosDisponibles(criterios: Object): List~Alojamiento~
+        +realizarReserva(alojamiento: Alojamiento, detallesReserva: Object): Reserva
+        +anularReservacionHuesped(codigoReservacion: String): boolean
+        +consultarMisReservaciones(): List~Reserva~
+    }
+
+    class Alojamiento {
+        -codigoIdentificador: String
+        -nombre: String
+        -anfitrionResponsable: Anfitrion
+        -departamento: String
+        -municipio: String
+        -tipo: String
+        -direccion: String
+        -precioPorNoche: float
+        -amenidades: List~String~
+        -fechasReservadas: List~RangoFechas~
+        +estaDisponible(fechaInicio: Date, numeroNoches: int): boolean
+        +agregarReserva(reserva: Reserva): void
+        +obtenerInformacionDetallada(): String
+    }
+
+    class Reserva {
+        -codigoReserva: String
+        -fechaEntrada: Date
+        -duracionNoches: int
+        -alojamientoReservado: Alojamiento
+        -huesped: Huesped
+        -metodoPago: String
+        -fechaPago: Date
+        -montoTotal: float
+        -anotacionesHuesped: String
+        +calcularFechaSalida(): Date
+        +obtenerComprobante(): String
+    }
+
+    class SistemaUdeAStay {
+        -listaAlojamientos: List~Alojamiento~
+        -listaAnfitriones: List~Anfitrion~
+        -listaHuespedes: List~Huesped~
+        -historicoReservas: List~Reserva~
+        +cargarDatosDesdeArchivos(): void
+        +actualizarDatosEnArchivos(): void
+        +autenticarUsuario(documento: String, rol: String): Usuario
+        +gestionarReservaAlojamiento(huesped: Huesped, criterios: Object): Reserva
+        +actualizarArchivoHistorico(fechaCorte: Date): void
+    }
+
+    %% Relaciones de Herencia
+    Usuario <|-- Anfitrion
+    Usuario <|-- Huesped
+
+    %% Relaciones de Asociación / Agregación ("es parte de")
+    Anfitrion "1" o-- "0..*" Alojamiento : administra
+    Alojamiento "1" -- "1" Anfitrion : es_responsabilidad_de
+
+    Huesped "1" o-- "0..*" Reserva : realiza
+    Reserva "1" -- "1" Huesped : hecha_por
+
+    Alojamiento "1" o-- "0..*" Reserva : tiene_asignada
+    Reserva "1" -- "1" Alojamiento : para_el
+
+    SistemaUdeAStay "1" o-- "0..*" Anfitrion : gestiona_anfitriones
+    SistemaUdeAStay "1" o-- "0..*" Huesped : gestiona_huespedes
+    SistemaUdeAStay "1" o-- "0..*" Alojamiento : gestiona_alojamientos
+    SistemaUdeAStay "1" o-- "0..*" Reserva : gestiona_reservas (incluye histórico)
