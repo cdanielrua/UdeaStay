@@ -1,0 +1,183 @@
+\documentclass[journal]{IEEEtran}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage[spanish]{babel} % For Spanish hyphenation and terms
+
+\title{Análisis y Diseño de Clases para el Proyecto UdeAStay }
+
+\author{
+    \IEEEauthorblockN{Daniel Rúa y Tomás Mesa}\\
+    \IEEEauthorblockA{\textit{Facultad de Ingeniería} \\
+    \textit{Departamento de Ingeniería Electrónica y Telecomunicaciones}\\
+    Universidad de Antioquia\\
+    Medellín, Colombia }
+}
+
+\bstctlcite{IEEEexample:BSTcontrol}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract} % Resumen
+Este documento presenta el análisis y diseño de la solución orientada a objetos para el proyecto UdeAStay, un sistema de administración para un mercado de estadías hogareñas. Conforme a una directriz de diseño que evita el uso de herencia, se detallan las clases seleccionadas como entidades independientes, justificando su elección en base a los requerimientos funcionales y no funcionales extraídos del enunciado del proyecto "Desafío II: Mercado de estadías hogareñas UdeAStay". El diseño busca modelar eficientemente las entidades principales y sus interacciones, facilitando la gestión de alojamientos, reservaciones, anfitriones y huéspedes.
+\end{abstract}
+
+\begin{IEEEkeywords}
+Programación Orientada a Objetos, Diseño de Clases, UML, UdeAStay, C++, Gestión de Reservas, Ingeniería de Software.
+\end{IEEEkeywords}
+
+\section{Introducción}
+El proyecto UdeAStay tiene como objetivo desarrollar un sistema para la administración de un mercado de estadías hogareñas, utilizando los principios de la Programación Orientada a Objetos (POO), con la particularidad de evitar el uso de mecanismos de herencia para las entidades principales de roles de usuario. El sistema debe permitir la gestión eficiente de alojamientos, reservaciones, los anfitriones y los huéspedes. Este documento se enfoca en la fase de análisis y diseño, específicamente en la definición y justificación de las clases que conforman la arquitectura de la solución, basándose en el documento "Desafío II: Mercado de estadías hogareñas UdeAStay" (referido en adelante como "el enunciado").
+
+El modelado correcto de las entidades del dominio del problema es fundamental para construir un software robusto y mantenible. La elección de clases, sus atributos, métodos y relaciones es el pilar de una solución POO efectiva, buscando la abstracción y encapsulación adecuadas para representar el sistema.
+
+\section{Análisis del Problema}
+El enunciado describe un sistema para UdeAStay, una compañía que aspira a posicionarse en la promoción de la actividad turística y la regulación del comercio de alojamientos en Antioquia. Los requerimientos principales identificados para el diseño de clases son:
+\begin{itemize}
+    \item Gestión de información detallada de \textbf{alojamientos}: nombre, código, anfitrión responsable, ubicación, tipo, dirección, precio, amenidades, y fechas reservadas.
+    \item Gestión de información de \textbf{anfitriones}: número de documento, antigüedad, puntuación y alojamientos que administra.
+    \item Gestión de información de \textbf{huéspedes}: número de documento, antigüedad, puntuación e información de sus reservas.
+    \item Gestión de \textbf{reservaciones}: fecha de entrada, duración, código, detalles del alojamiento y huésped, pago, monto, y anotaciones.
+    \item Implementación de \textbf{funcionalidades esenciales} como carga/actualización de datos, ingreso a la plataforma por perfil, reserva de alojamiento, anulación de reservaciones, consulta de reservaciones por anfitriones y actualización del histórico.
+    \item Medición automática del consumo de recursos.
+\end{itemize}
+Estos requerimientos implican la identificación de entidades distintas con responsabilidades claras. La restricción de no usar herencia significa que los roles de usuario (Anfitrión y Huésped) se modelarán como clases separadas y completas.
+
+\section{Justificación del Diseño de Clases}
+Considerando la restricción de no utilizar herencia, se propone la siguiente estructura de clases:
+
+\subsection{Clase \texttt{Anfitrion}}
+\textbf{Justificación:} El anfitrión es uno de los dos roles principales de usuario en el sistema, con responsabilidades y datos específicos para la oferta y gestión de alojamientos. Al no utilizar una clase base común, \texttt{Anfitrion} encapsulará toda su información y comportamiento de manera independiente.
+\begin{itemize}
+    \item \textbf{Atributos Principales:}
+        \begin{itemize}
+            \item `numeroDocumento` (String): Identificador único del anfitrión.
+            \item `credenciales` (Object): Para el proceso de inicio de sesión (e.g., nombre de usuario, contraseña).
+            \item `antiguedadPlataformaMeses` (int): Tiempo del anfitrión en la plataforma.
+            \item `puntuacion` (float): Calificación del anfitrión (0-5.0).
+            \item `alojamientosAdministrados` (Lista de `Alojamiento`): Referencias a los alojamientos que gestiona.
+        \end{itemize}
+    \item \textbf{Métodos Principales:}
+        \begin{itemize}
+            \item `iniciarSesion(documento, password)`: Verifica las credenciales para el acceso.
+            \item `obtenerInformacionPersonal()`: Devuelve los datos del perfil del anfitrión.
+            \item `agregarAlojamiento(nuevoAlojamiento: Alojamiento)`: Añade un nuevo alojamiento a su lista.
+            \item `eliminarAlojamiento(codigoAlojamiento: String)`: Elimina un alojamiento.
+            \item `consultarReservacionesActivas(fechaInicio: Date, fechaFin: Date)`: Muestra las reservaciones activas para sus alojamientos.
+            \item `anularReservacion(codigoReservacion: String)`: Permite al anfitrión anular una reservación asociada a sus alojamientos.
+        \end{itemize}
+    \item \textbf{Modelado Directo de Rol:} Representa directamente la entidad "Anfitrión" como se describe en el problema, con todas sus características necesarias para interactuar con el sistema en su rol específico de proveedor de alojamientos.
+\end{itemize}
+
+\subsection{Clase \texttt{Huesped}}
+\textbf{Justificación:} El huésped es el otro rol principal de usuario, enfocado en la búsqueda y reserva de alojamientos. Como clase independiente, \texttt{Huesped} contendrá toda la información y lógica necesaria para sus interacciones.
+\begin{itemize}
+    \item \textbf{Atributos Principales:}
+        \begin{itemize}
+            \item `numeroDocumento` (String): Identificador único del huésped.
+            \item `credenciales` (Object): Para el proceso de inicio de sesión.
+            \item `antiguedadPlataformaMeses` (int): Tiempo del huésped en la plataforma.
+            \item `puntuacion` (float): Calificación del huésped (0-5.0).
+            \item `reservasRealizadas` (Lista de `Reserva`): Historial de reservaciones del huésped.
+        \end{itemize}
+    \item \textbf{Métodos Principales:}
+        \begin{itemize}
+            \item `iniciarSesion(documento, password)`: Verifica las credenciales para el acceso.
+            \item `obtenerInformacionPersonal()`: Devuelve los datos del perfil del huésped.
+            \item `buscarAlojamientosDisponibles(criterios: Object)`: Busca y filtra alojamientos.
+            \item `buscarAlojamientoPorCodigo(codigoAlojamiento: String)`: Busca un alojamiento específico.
+            \item `realizarReserva(alojamientoSeleccionado: Alojamiento, ...)`: Crea una nueva reservación.
+            \item `anularReservacion(codigoReservacion: String)`: Permite al huésped anular una de sus reservaciones.
+            \item `consultarMisReservaciones()`: Muestra las reservaciones del huésped.
+        \end{itemize}
+    \item \textbf{Modelado Directo de Rol:} Corresponde a la entidad "Huésped" como se describe en el problema, con la capacidad de realizar búsquedas, reservaciones y gestionar su información de manera autónoma dentro del sistema. La restricción de no solapamiento de fechas en sus reservas es una lógica de negocio importante asociada a esta clase.
+\end{itemize}
+
+\subsection{Clase \texttt{Alojamiento}}
+\textbf{Justificación:} Esta es una de las entidades centrales del sistema UdeAStay, representando las propiedades que se ofrecen en alquiler. Su diseño permanece fundamentalmente igual, ya que no dependía de la herencia de roles de usuario.
+\begin{itemize}
+    \item \textbf{Atributos Principales:}
+        \begin{itemize}
+            \item `codigoIdentificador` (String): Código único del alojamiento.
+            \item `nombre` (String): Nombre descriptivo.
+            \item `anfitrionResponsable` (Referencia a `Anfitrion`): El anfitrión dueño.
+            \item `departamento`, `municipio`, `tipo`, `direccion` (String).
+            \item `precioPorNoche` (float).
+            \item `amenidades` (Lista de Strings).
+            \item `fechasReservadas` (Lista de `RangoFechas` o similar).
+        \end{itemize}
+    \item \textbf{Métodos Principales:}
+        \begin{itemize}
+            \item `estaDisponible(fechaInicio: Date, numeroNoches: int)`: Verifica disponibilidad.
+            \item `agregarReserva(reserva: Reserva)`: Añade una reserva a sus fechas.
+            \item `eliminarReserva(codigoReserva: String)`: Quita una reserva.
+            \item `obtenerInformacionDetallada()`: Devuelve detalles del alojamiento.
+        \end{itemize}
+    \item \textbf{Entidad Fundamental:} Sigue siendo crucial para el sistema, encapsulando toda la información y el estado de una propiedad.
+\end{itemize}
+
+\subsection{Clase \texttt{Reserva}}
+\textbf{Justificación:} Modela la acción y el registro de una reservación de un alojamiento por parte de un huésped. Su diseño tampoco se ve afectado directamente por la eliminación de la herencia entre usuarios.
+\begin{itemize}
+    \item \textbf{Atributos Principales:}
+        \begin{itemize}
+            \item `codigoReserva` (String): Identificador único, gestionado automáticamente.
+            \item `fechaEntrada` (Date), `duracionNoches` (int).
+            \item `alojamientoReservado` (Referencia a `Alojamiento`).
+            \item `huesped` (Referencia a `Huesped`).
+            \item `metodoPago`, `fechaPago`, `montoTotal`.
+            \item `anotacionesHuesped` (String).
+        \end{itemize}
+    \item \textbf{Métodos Principales:}
+        \begin{itemize}
+            \item `calcularFechaSalida()`: Determina la fecha de finalización.
+            \item `confirmarReserva()`: Marca la reserva como confirmada.
+            \item `obtenerComprobante()`: Genera detalles de la confirmación.
+        \end{itemize}
+    \item \textbf{Entidad Transaccional Clave:} Sigue siendo el nexo entre un huésped y un alojamiento para un período específico, con todas las validaciones y datos asociados.
+\end{itemize}
+
+\subsection{Clase \texttt{SistemaUdeAStay} (o GestorPrincipal)}
+\textbf{Justificación:} Se necesita una clase orquestadora que maneje las interacciones generales del sistema, la lógica de negocio principal y la interfaz con el usuario (menús).
+\begin{itemize}
+    \item \textbf{Atributos Principales:}
+        \begin{itemize}
+            \item `listaAlojamientos` (Lista de `Alojamiento`).
+            \item `listaAnfitriones` (Lista de `Anfitrion`).
+            \item `listaHuespedes` (Lista de `Huesped`).
+            \item `historicoReservas` (Lista de `Reserva`).
+        \end{itemize}
+    \item \textbf{Métodos Principales:}
+        \begin{itemize}
+            \item `cargarDatosDesdeArchivos()` / `actualizarDatosEnArchivos()`.
+            \item `autenticarUsuario(documento: String, password: String, rolIndicado: String)`: Verifica credenciales contra la lista de Anfitriones o Huéspedes.
+            \item `gestionarReservaAlojamiento(huesped: Huesped, ...)`
+            \item `actualizarArchivoHistorico(fechaCorte: Date)`.
+            \item `medirConsumoRecursosInicio()` / `medirConsumoRecursosFin()`.
+            \item `mostrarMenuPrincipal()` y menús específicos por rol.
+        \end{itemize}
+    \item \textbf{Control Centralizado:} Su rol se vuelve aún más importante para gestionar las colecciones separadas de anfitriones y huéspedes y coordinar las operaciones entre todas las entidades.
+\end{itemize}
+
+\section{Relaciones entre Clases}
+Con la eliminación de la herencia para los roles de usuario, las relaciones se reconfiguran de la siguiente manera:
+\begin{itemize}
+    \item \textbf{Asociación y Agregación:}
+        \begin{itemize}
+            \item Un \texttt{Anfitrion} administra uno o muchos \texttt{Alojamientos} ("1 a N"). Un \texttt{Alojamiento} tiene un \texttt{Anfitrion} responsable ("1 a 1").
+            \item Un \texttt{Huesped} realiza cero o muchas \texttt{Reservas} ("1 a N"). Una \texttt{Reserva} pertenece a un \texttt{Huesped} ("1 a 1").
+            \item Un \texttt{Alojamiento} puede tener múltiples \texttt{Reservas} a lo largo del tiempo ("1 a N"). Una \texttt{Reserva} es para un \texttt{Alojamiento} específico ("1 a 1").
+        \end{itemize}
+        Estas relaciones modelan cómo las instancias de las clases se conectan e interactúan.
+    \item La clase \texttt{SistemaUdeAStay} agrega y gestiona colecciones separadas de \texttt{Anfitrion}, \texttt{Huesped}, \texttt{Alojamiento}, y \texttt{Reserva}.
+\end{itemize}
+Estas relaciones son esenciales para mantener la integridad de los datos y para la correcta ejecución de las funcionalidades requeridas por el sistema.
+
+\section{Conclusión}
+ Este enfoque se deriva directamente del análisis de los requisitos funcionales y las entidades descritas en el enunciado del proyecto UdeAStay, adaptado a las restriciones de diseño. Aunque se pueda presentar duplicación de atributos comunes entre \texttt{Anfitrion} y \texttt{Huesped} (como `numeroDocumento`, `antiguedadPlataformaMeses`, `puntuacion`), cada clase encapsula completamente las responsabilidades y datos de su respectivo rol. Esta estructura busca proporcionar una base sólida y cohesiva para la implementación de la solución en C++. La correcta definición de constructores, destructores, métodos de acceso y la sobrecarga necesaria, junto con una gestión eficiente de la memoria y las estructuras de datos (sin uso de STL y con memoria dinámica), serán cruciales para cumplir con todos los objetivos del desafío.
+
+\end{document}
