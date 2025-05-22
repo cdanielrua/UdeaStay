@@ -5,7 +5,10 @@ CONFIG -= qt
 
 SOURCES += \
         Anfitrion.cpp \
+        Reserva.cpp \
         main.cpp
 
 HEADERS += \
-    Anfitrion.h
+    Anfitrion.h \
+    ListaPersonalizada.h \
+    Reserva.h
