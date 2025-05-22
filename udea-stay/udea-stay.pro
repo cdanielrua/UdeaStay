@@ -5,7 +5,12 @@ CONFIG -= qt
 
 SOURCES += \
         Huespedes.cpp \
+        credenciales.cpp \
+        fecha.cpp \
         main.cpp
 
 HEADERS += \
-    Huespedes.h
+    Huespedes.h \
+    credenciales.h \
+    fecha.h \
+    utils.h
