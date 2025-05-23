@@ -1,101 +1,182 @@
 classDiagram
+    class ListaPGenerica {
+        <<template T>>
+        -T* elementos
+        -int capacidad
+        -int tamano
+        +ListaPersonalizada(int capInicial)
+        +~ListaPersonalizada()
+        +void agregar(T elemento)
+        +void agregarPuntero(T elementoPtr)
+        +T obtener(int indice) const
+        +boolean eliminar(int indice)
+        +int getTamano() const
+        +boolean estaVacia() const
+        +T& operator[](int indice)
+        +void limpiarPunteros()
+    }
+    note for ListaPGenerica "Implementación propia de lista dinámica.<br>Requerida por la restricción de no usar STL.<br>Gestiona la memoria de su array interno.<br>Si T es un puntero, limpiarPunteros()<br>borra los objetos apuntados."
+
+    class Fecha {
+        +int dia
+        +int mes
+        +int anio
+        +Fecha(int d, int m, int a)
+        +char* toStringFormateado() const
+        +void mostrar() const
+        +boolean operator==(Fecha otra) const
+        +boolean operator<(Fecha otra) const
+        +boolean operator!=(Fecha otra) const
+        +boolean operator<=(Fecha otra) const
+        +boolean operator>(Fecha otra) const
+        +boolean operator>=(Fecha otra) const
+    }
+    note for Fecha "Representa una fecha.<br>Requiere lógica robusta para<br>aritmética (sumar días, etc.)<br>y formateo 'nombre Día...'."
+
+    class Credenciales {
+        +char* nombreUsuario
+        +char* password
+        +Credenciales(char* user, char* pass)
+        +~Credenciales()
+        +Credenciales(Credenciales& otra)
+        +Credenciales& operator=(Credenciales& otra)
+        +boolean verificarPassword(char* passIntento) const
+        +void mostrar() const
+    }
+    note for Credenciales "Encapsula datos de autenticación.<br>Los char* se gestionan dinámicamente.<br>Password se almacena directamente (simplificación)."
+
     class Anfitrion {
         -String numeroDocumento
         -String nombreCompleto
-        -Object credenciales  %% Para login
+        -Credenciales credenciales
         -int antiguedadPlataformaMeses
         -float puntuacion
-        -List~Alojamiento~ alojamientosAdministrados
-        +Anfitrion(String doc, String nombre, Object cred, int antig, float punt)
-        +boolean iniciarSesion(String id, String pass)
-        +void agregarAlojamiento(Object datosAlojamiento)
-        +void eliminarAlojamiento(String codigoAlojamiento)
-        +List~Reserva~ consultarReservacionesActivas(Date fechaInicio, Date fechaFin)
-        +boolean anularReservacion(String codigoReservacion)
-        +String obtenerInformacion()
+        -ListaPGenerica~Alojamiento~ alojamientosAdministrados
+        +Anfitrion(String doc, String nombre, Credenciales creds, int antig, float punt)
+        +~Anfitrion()
+        +boolean verificarPassword(String passIntento) const
+        +void agregarAlojamiento(Alojamiento* nuevoAlojamiento)
+        +boolean eliminarAlojamiento(String codigoAlojamiento)
+        +ListaPGenerica~Reserva~ consultarReservacionesActivas(Fecha fechaInicio, Fecha fechaFin) const
+        +boolean anularReservacionEnAlojamiento(String codigoReservacion, String codigoAlojamiento)
+        +void mostrarInformacion() const
     }
+    note for Anfitrion "Representa a un proveedor de alojamientos.<br>'alojamientosAdministrados' contiene punteros<br>a objetos Alojamiento cuya memoria es<br>gestionada por SistemaUdeAStay."
 
     class Huesped {
         -String numeroDocumento
         -String nombreCompleto
-        -Object credenciales %% Para login
+        -Credenciales credenciales
         -int antiguedadPlataformaMeses
         -float puntuacion
-        -List~Reserva~ reservasRealizadas
-        +Huesped(String doc, String nombre, Object cred, int antig, float punt)
-        +boolean iniciarSesion(String id, String pass)
-        +List~Alojamiento~ buscarAlojamientos(Object criterios)
-        +Reserva reservarAlojamiento(Alojamiento alojamiento, Date fechaEnt, int numNoches, String metPago, String anot)
-        +boolean anularReservacion(String codigoReservacion)
-        +List~Reserva~ consultarMisReservaciones()
-        +String obtenerInformacion()
+        -ListaPGenerica~Reserva~ reservasRealizadas
+        +Huesped(String doc, String nombre, Credenciales creds, int antig, float punt)
+        +~Huesped()
+        +boolean verificarPassword(String passIntento) const
+        +void agregarReferenciaReserva(Reserva* nuevaReserva)
+        +boolean cancelarReferenciaReserva(String codigoReservacion)
+        +void mostrarInformacion() const
     }
 
     class Alojamiento {
         -String codigoIdentificador
         -String nombre
-        -Anfitrion anfitrionResponsable  %% Referencia directa al Anfitrion
+        -Anfitrion anfitrionResponsable
         -String departamento
         -String municipio
-        -String tipo %% e.g., "casa", "apartamento"
+        -String tipo
         -String direccion
         -float precioPorNoche
-        -List~String~ amenidades
-        -List~Object~ fechasReservadas %% Lista de periodos/reservas activas
-        +Alojamiento(String cod, String nom, Anfitrion anfitrion, String dep, String mun, String tipo, String dir, float precio)
-        +boolean estaDisponible(Date fechaInicio, int numNoches)
-        +void agregarReservaInfo(Reserva reserva) %% Actualiza fechasReservadas
-        +void eliminarReservaInfo(String codigoReserva)
-        +String obtenerInformacionDetallada()
+        -ListaPGenerica~String~ amenidades
+        -ListaPGenerica~Reserva~ referenciasAReservas
+        +Alojamiento(String cod, String nom, Anfitrion anfi, String dep, String mun, String tipoAloj, String dir, float precio)
+        +~Alojamiento()
+        +boolean estaDisponible(Fecha fechaInicio, int numNoches) const
+        +void agregarReferenciaReserva(Reserva* reserva)
+        +boolean eliminarReferenciaReserva(String codigoReserva)
         +void agregarAmenidad(String amenidad)
+        +boolean tieneAmenidad(String amenidad) const
+        +void mostrarInformacionDetallada() const
+        +ListaPGenerica~Reserva~ getReferenciasAReservas() const
+        +String getCodigoIdentificador() const
+        +String getNombre() const
+        +Anfitrion getAnfitrionResponsable() const
+        +String getMunicipio() const
+        +float getPrecioPorNoche() const
     }
 
     class Reserva {
         -String codigoReserva
-        -Alojamiento alojamiento %% Referencia directa al Alojamiento
-        -Huesped huesped %% Referencia directa al Huesped
-        -Date fechaEntrada
+        -Alojamiento alojamiento
+        -Huesped huesped
+        -Fecha fechaEntrada
         -int duracionNoches
-        -String metodoPago %% e.g., "PSE", "TCredito"
-        -Date fechaPago
+        -String metodoPago
+        -Fecha fechaPago
         -float montoTotal
         -String anotacionesHuesped
-        +Reserva(String cod, Alojamiento aloj, Huesped hues, Date fEnt, int dur, String metPago, Date fPago, float monto, String anot)
-        +Date calcularFechaSalida()
-        +String generarComprobante()
-        +String formatearFechaParaComprobante(Date fecha)
+        +Reserva(String cod, Alojamiento aloj, Huesped hues, Fecha fEnt, int dur, String metPago, Fecha fPago, float monto, String anot)
+        +~Reserva()
+        +Fecha calcularFechaSalida() const
+        +String generarComprobante() const
+        +void mostrarInformacion() const
+        +String getCodigoReserva() const
+        +Alojamiento getAlojamiento() const
+        +Huesped getHuesped() const
+        +Fecha getFechaEntrada() const
     }
+    note for Reserva "'codigoReserva' es auto-generado por SistemaUdeAStay.<br>Los punteros a Alojamiento y Huesped son de observación."
 
     class SistemaUdeAStay {
-        -List~Anfitrion~ listaAnfitriones
-        -List~Huesped~ listaHuespedes
-        -List~Alojamiento~ listaAlojamientos
-        -List~Reserva~ historicoReservas %% Reservas pasadas
-        +SistemaUdeAStay() %% Constructor
+        -ListaPGenerica~Anfitrion~ listaAnfitriones
+        -ListaPGenerica~Huesped~ listaHuespedes
+        -ListaPGenerica~Alojamiento~ listaAlojamientos
+        -ListaPGenerica~Reserva~ historicoReservas
+        -long proximoIdReserva
+        -long contadorIteracionesGlobal
+        -long memoriaEstimadaGlobal
+        +SistemaUdeAStay()
+        +~SistemaUdeAStay()
+        +void iniciarSistema()
         +void cargarDatos()
         +void guardarDatos()
-        +Object autenticarUsuario(String documento, String pass, String rol) %% Retorna Anfitrion o Huesped
-        +void gestionarReservaAlojamiento(Huesped huesped, Object criteriosBusqueda, Object datosReserva)
-        +void gestionarAnulacionReserva(Object usuario, String codigoReserva)
-        +void consultarReservasPorAnfitrion(Anfitrion anfitrion, Date fechaInicio, Date fechaFin)
-        +void actualizarHistoricoReservas(Anfitrion anfitrionSolicitante, Date fechaCorte)
-        +void medirConsumoRecursos(String nombreFuncionalidad, Function operacion) %% Ejecuta y mide
+        +Object autenticarUsuario(String documento, String password, String rol)
+        +void gestionarIngresoPlataforma()
         +void mostrarMenuPrincipal()
         +void mostrarMenuAnfitrion(Anfitrion anfitrion)
         +void mostrarMenuHuesped(Huesped huesped)
+        +void realizarProcesoReserva(Huesped huesped)
+        +void realizarProcesoAnulacion(Object usuario, boolean esAnfitrion)
+        +void realizarConsultaReservasAnfitrion(Anfitrion anfitrion)
+        +void realizarActualizacionHistorico(Anfitrion anfitrion)
+        +void iniciarMedicionIteraciones()
+        +void incrementarIteraciones(long cantidad)
+        +void finalizarMedicionRecursosYMostrar(String nombreFuncionalidad)
+        +void estimarMemoriaActual()
     }
+    note for SistemaUdeAStay "Clase orquestadora principal.<br>Gestiona listas maestras y ciclo de vida de objetos.<br>Maneja persistencia y la interacción con el usuario."
 
-    %% Relaciones de Asociación y Agregación
+    %% Relaciones (sin etiquetas de texto)
+    Anfitrion o-- Credenciales
+    Huesped o-- Credenciales
+    Reserva o-- Fecha 
+    Reserva o-- Fecha 
+    
     Anfitrion "1" o-- "0..*" Alojamiento
-    Alojamiento --> "1" Anfitrion
+    Huesped "1" o-- "0..*" Reserva 
+    Alojamiento "1" o-- "0..*" Reserva 
+    Alojamiento o-- "*" ListaPGenerica 
+    
+    Alojamiento --> "1" Anfitrion 
+    Reserva --> "1" Alojamiento 
+    Reserva --> "1" Huesped 
 
-    Huesped "1" o-- "0..*" Reserva
-    Reserva --> "1" Huesped
+    SistemaUdeAStay o-- "*" Anfitrion 
+    SistemaUdeAStay o-- "*" Huesped 
+    SistemaUdeAStay o-- "*" Alojamiento 
+    SistemaUdeAStay o-- "*" Reserva 
 
-    Alojamiento "1" o-- "0..*" Reserva
-    Reserva --> "1" Alojamiento
-
-    SistemaUdeAStay o-- "*" Anfitrion
-    SistemaUdeAStay o-- "*" Huesped
-    SistemaUdeAStay o-- "*" Alojamiento
-    SistemaUdeAStay o-- "*" Reserva
+    Anfitrion ..> ListaPGenerica
+    Huesped ..> ListaPGenerica
+    Alojamiento ..> ListaPGenerica 
+    SistemaUdeAStay ..> ListaPGenerica
