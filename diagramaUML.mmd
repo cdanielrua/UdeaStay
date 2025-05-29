@@ -1,0 +1,148 @@
+classDiagram
+    class ListaPGenerica {
+        <<template T>>
+        -T* elementos
+        -int capacidad
+        -int tamano
+        +ListaPersonalizada(int capInicial)
+        +~ListaPersonalizada()
+        +void agregarPuntero(T elementoPtr)
+        +T obtener(int indice) const
+        +int getTamano() const
+    }
+    note for ListaPGenerica "Implementación propia de lista dinámica (array).\nRequerida por restricción de no usar STL."
+
+    class Fecha {
+        +int dia
+        +int mes
+        +int anio
+        +Fecha(int d, int m, int a)
+        +char* toStringFormateado() const
+        +void mostrar() const
+    }
+    note for Fecha "Representa y formatea fechas.\nRequiere lógica robusta para aritmética."
+
+    class Credenciales {
+        +char* nombreUsuario
+        +char* password
+        +Credenciales(char* user, char* pass)
+        +~Credenciales()
+        +boolean verificarPassword(char* passIntento) const
+    }
+    note for Credenciales "Encapsula datos de autenticación.\nGestión dinámica de char*."
+
+    class Anfitrion {
+        -String numeroDocumento
+        -String nombreCompleto
+        -Credenciales credenciales // Anfitrion "es parte de" Credenciales
+        -int antiguedadPlataformaMeses
+        -float puntuacion
+        -ListaPGenerica~Alojamiento~ alojamientosAdministrados // Anfitrion "es parte de" su lista de Alojamientos
+        +Anfitrion(String doc, String nombre, Credenciales creds, int antig, float punt)
+        +~Anfitrion()
+        +void agregarAlojamiento(Alojamiento* nuevoAlojamiento)
+        +ListaPGenerica~Reserva~ consultarReservacionesActivas(Fecha fechaInicio, Fecha fechaFin) const
+        +void mostrarInformacion() const
+    }
+    note for Anfitrion "Proveedor de alojamientos.\nSu lista de alojamientos contiene punteros\na objetos Alojamiento gestionados por SistemaUdeAStay."
+
+    class Huesped {
+        -String numeroDocumento
+        -String nombreCompleto
+        -Credenciales credenciales // Huesped "es parte de" Credenciales
+        -int antiguedadPlataformaMeses
+        -float puntuacion
+        -ListaPGenerica~Reserva~ reservasRealizadas // Huesped "es parte de" su lista de Reservas
+        +Huesped(String doc, String nombre, Credenciales creds, int antig, float punt)
+        +~Huesped()
+        +void agregarReferenciaReserva(Reserva* nuevaReserva)
+        +void mostrarInformacion() const
+    }
+
+    class Alojamiento {
+        -String codigoIdentificador
+        -String nombre
+        -Anfitrion anfitrionResponsable // Asociación directa, no "es parte de" Anfitrion
+        -String municipio
+        -float precioPorNoche
+        -ListaPGenerica~String~ amenidades // Alojamiento "es parte de" su lista de amenidades
+        -ListaPGenerica~Reserva~ referenciasAReservas // Alojamiento "es parte de" su lista de referencias a Reservas
+        +Alojamiento(String cod, String nom, Anfitrion anfi, String mun, float precio)
+        +~Alojamiento()
+        +boolean estaDisponible(Fecha fechaInicio, int numNoches) const
+        +void agregarAmenidad(String amenidad)
+        +void mostrarInformacionDetallada() const
+    }
+
+    class Reserva {
+        -String codigoReserva
+        -Alojamiento alojamiento // Asociación directa
+        -Huesped huesped       // Asociación directa
+        -Fecha fechaEntrada    // Reserva "es parte de" Fecha
+        -int duracionNoches
+        -String metodoPago
+        -float montoTotal
+        -String anotacionesHuesped
+        +Reserva(String cod, Alojamiento aloj, Huesped hues, Fecha fEnt, int dur, String metPago, float monto, String anot)
+        +~Reserva()
+        +Fecha calcularFechaSalida() const
+        +String generarComprobante() const
+        +void mostrarInformacion() const
+    }
+    note for Reserva "El 'codigoReserva' es auto-generado.\nPunteros a Alojamiento y Huesped son de observación."
+
+    class SistemaUdeAStay {
+        -ListaPGenerica~Anfitrion~ listaAnfitriones
+        -ListaPGenerica~Huesped~ listaHuespedes
+        -ListaPGenerica~Alojamiento~ listaAlojamientos
+        -ListaPGenerica~Reserva~ listaReservasActivas
+        -ListaPGenerica~Reserva~ historicoReservas
+        +SistemaUdeAStay()
+        +~SistemaUdeAStay()
+        +void iniciarSistema()
+        +void cargarDatos()
+        +void guardarDatos()
+        +Object autenticarUsuario(String documento, String password, String rol)
+    }
+    note for SistemaUdeAStay "Clase orquestadora. Contiene y gestiona\nlas listas maestras de objetos (dueño)."
+
+    %% Relaciones "Es parte de" (Composición fuerte - Rombo Negro)
+    %% Una instancia de la clase "Todo" (izquierda) contiene y es responsable
+    %% del ciclo de vida de la instancia de la clase "Parte" (derecha) o de su lista.
+    SistemaUdeAStay "1" *-- "0..N" Anfitrion : "listaAnfitriones"
+    SistemaUdeAStay "1" *-- "0..N" Huesped : "listaHuespedes"
+    SistemaUdeAStay "1" *-- "0..N" Alojamiento : "listaAlojamientos"
+    SistemaUdeAStay "1" *-- "0..N" Reserva : "listaReservasActivas"
+    SistemaUdeAStay "1" *-- "0..N" Reserva : "historicoReservas"
+
+    Anfitrion "1" *-- "1" Credenciales : "credenciales"
+    Anfitrion "1" *-- "1" ListaPGenerica : "alojamientosAdministrados" %% Esta lista es parte del Anfitrion
+
+    Huesped "1" *-- "1" Credenciales : "credenciales"
+    Huesped "1" *-- "1" ListaPGenerica : "reservasRealizadas" %% Esta lista es parte del Huesped
+
+    Alojamiento "1" *-- "1" ListaPGenerica : "amenidades" %% La lista de amenidades es parte del Alojamiento
+    Alojamiento "1" *-- "1" ListaPGenerica : "referenciasAReservas" %% La lista de refs es parte del Alojamiento
+    
+    Reserva "1" *-- "1" Fecha : "fechaEntrada"
+    %% Reserva también tiene fechaPago, podríamos añadir otra relación o asumirla.
+
+    %% Asociaciones directas (sin rombo, representan referencias donde una clase usa/conoce a otra)
+    %% Estas no son "es parte de" en el sentido de composición estricta de la instancia referenciada,
+    %% sino que un objeto "conoce" o "apunta a" otro.
+    Alojamiento -- "1" Anfitrion : "anfitrionResponsable" 
+    Reserva -- "1" Alojamiento : "alojamiento"
+    Reserva -- "1" Huesped : "huesped"
+    
+    %% Dependencias de uso de la plantilla genérica (como en el diagrama anterior)
+    %% Estas indican que la clase de la izquierda USA la estructura ListaPGenerica
+    %% para alguno de sus miembros (que ya se ve en los atributos).
+    %% Las líneas de composición de arriba (Anfitrion *-- ListaPGenerica) ya indican
+    %% que la lista específica ES PARTE del Anfitrion.
+    %% Quizás estas líneas punteadas de dependencia no son necesarias si ya se muestran
+    %% las relaciones de composición con las listas instanciadas.
+    %% Las omitiré por ahora para no sobrecargar, ya que los atributos ya muestran el uso.
+    %% Anfitrion ..> ListaPGenerica
+    %% Huesped ..> ListaPGenerica
+    %% Alojamiento ..> ListaPGenerica
+    %% SistemaUdeAStay ..> ListaPGenerica
