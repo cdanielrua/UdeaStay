@@ -13,6 +13,8 @@ char* duplicarCString(const char* s) {
 
 Credenciales::Credenciales(const char* user, const char* pass) {
     nombreUsuario = duplicarCString(user);
+    // ¡ADVERTENCIA! Almacenar contraseñas en texto plano es inseguro.
+    // Esto es solo para propósitos del ejercicio. En un sistema real, se usaría un hash.
     password = duplicarCString(pass);
 }
 
@@ -39,12 +41,13 @@ Credenciales& Credenciales::operator=(const Credenciales& otra) {
 
 bool Credenciales::verificarPassword(const char* passIntento) const {
     if (!password || !passIntento) {
-        return (!password && !passIntento);
+        return (!password && !passIntento); // Ambos nulos se consideran "iguales" en este contexto simple
     }
     return strcmp(password, passIntento) == 0;
 }
 
 void Credenciales::mostrar() const {
     std::cout << "Usuario: " << (nombreUsuario ? nombreUsuario : "N/A") << std::endl;
-
+    // No imprimir la contraseña, incluso en depuración, es buena práctica.
+    // std::cout << "Password (simulado): " << (password ? password : "N/A") << std::endl;
 }

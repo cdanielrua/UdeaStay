@@ -1,9 +1,9 @@
 #ifndef HUESPED_H
 #define HUESPED_H
 
-//#include "Fecha.h"
-//#include "Credenciales.h"
-//#include "ListaPersonalizada.h"
+#include "Fecha.h"
+#include "Credenciales.h"
+#include "ListaPersonalizada.h"
 
 // Forward declarations
 class Alojamiento;
