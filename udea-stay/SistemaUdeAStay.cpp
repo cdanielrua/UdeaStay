@@ -433,7 +433,7 @@ void SistemaUdeAStay::cargarHistoricoReservas() {
         if (!aloj || !hues) {
             std::cerr << "ADVERTENCIA: Alojamiento (" << codAloj_token << ") o Huésped (" << docHues_token
                       << ") no encontrado para reserva histórica '" << codRes_token << "'. Reserva histórica no completamente enlazada o no cargada." << std::endl;
-            // Podrías decidir cargar la reserva con punteros nulos a Alojamiento/Huesped,
+            // Podriamos decidir cargar la reserva con punteros nulos a Alojamiento/Huesped,
             // o no cargarla, o cargar solo los IDs. Por ahora, si no se encuentran, no se carga.
             delete[] lineaMutable;
             continue;
@@ -445,14 +445,14 @@ void SistemaUdeAStay::cargarHistoricoReservas() {
 
         Reserva* res = new Reserva(codRes_token, aloj, hues, fEnt, durNoches, metPago_token, fPago, monto, anot_token);
         historicoReservas->agregarPuntero(res); // SistemaUdeAStay es dueño de esta reserva histórica
-        // Decisión: ¿Las reservas históricas también se añaden a las listas de referencia de Huesped/Alojamiento?
-        // El PDF dice "De los huéspedes se conoce ... la información de sus reservas". Podría incluir todas.
-        // Si es así, las añadirías:
-        // hues->agregarReferenciaReserva(res);
-        // aloj->agregarReferenciaReserva(res); // Esto podría saturar la lista de "referencias activas" del Alojamiento.
-        // Es más probable que `reservasRealizadas` del Huesped sea un historial completo,
-        // pero `referenciasAReservas` del Alojamiento sea solo para las activas/futuras.
-        // Por ahora, solo al histórico del sistema y el Huesped podría tenerla si es su historial completo.
+
+
+
+
+
+
+
+
         if(hues) hues->agregarReferenciaReserva(res);
 
         incrementarIteraciones();
@@ -664,19 +664,19 @@ Reserva* SistemaUdeAStay::buscarReservaVigente(const char* codigoReservaBuscado)
     // NOTA: Si esta función debe contar iteraciones, no puede ser const.
     // Por ahora, la mantengo const y no cuento iteraciones aquí.
     std::cout << "Advertencia: buscarReservaVigente necesita una lista de reservas activas en SistemaUdeAStay." << std::endl;
-    // Si tuvieras una 'listaReservasActivas':
-    /*
-    if (listaReservasActivas && codigoReservaBuscado) {
-        for (int i = 0; i < listaReservasActivas->getTamano(); ++i) {
-            // this->incrementarIteraciones(); // Si no fuera const
-            Reserva* res = listaReservasActivas->obtener(i);
-            if (res && strcmp(res->getCodigoReserva(), codigoReservaBuscado) == 0) {
-                return res;
-            }
-        }
-    }
-    */
-    // Para quitar el warning sin implementar la lógica completa ahora:
+
+
+
+
+
+
+
+
+
+
+
+
+
     (void)codigoReservaBuscado; // Marca el parámetro como usado explícitamente para el compilador
 
     return nullptr; // O devuelve algo significativo si la lógica está parcialmente implementada
@@ -1069,12 +1069,12 @@ void SistemaUdeAStay::realizarProcesoReserva(Huesped* huesped) {
         Reserva* nuevaReserva = new Reserva(codigoNuevaReserva, elegido, huesped, fechaEntrada, noches, metodoPago, fechaHoy, monto, anotaciones);
         incrementarIteraciones(); // por el new
 
-        // IMPORTANTE: ¿Quién es dueño de nuevaReserva?
-        // Se debe añadir a una lista del SistemaUdeAStay para su gestión y posterior delete.
-        // Por ahora, asumimos que el destructor del sistema se encargará de las reservas referenciadas si no
-        // se añaden explícitamente a historicoReservas o a una lista de activas.
-        // Esto es un punto débil del diseño actual si no hay una lista `listaReservasActivasGlobal`.
-        // Una opción es añadirlo a historicoReservas temporalmente.
+
+
+
+
+
+
 
 
         if(nuevaReserva) {
@@ -1217,11 +1217,11 @@ void SistemaUdeAStay::realizarActualizacionHistorico(Anfitrion* anfitrion) {
 
     Fecha fechaCorte(d, m, a);
 
-    // Validar que la fecha de corte no sea menor que fechas en el histórico (según PDF [cite: 143])
-    // Esta validación requeriría iterar el histórico y comparar. Por ahora, la omitimos
-    // por simplicidad, pero es un requisito del PDF. [cite: 143]
-    // También, el PDF dice que la fecha de corte se toma como base para los próximos 12 meses
-    // para nuevas reservaciones. [cite: 144] Esto es una regla de negocio para la creación de reservas.
+
+
+
+
+
 
     std::cout << "Procesando actualizacion de historico..." << std::endl;
 
@@ -1241,7 +1241,7 @@ void SistemaUdeAStay::realizarActualizacionHistorico(Anfitrion* anfitrion) {
             Fecha fechaSalidaRes = res->calcularFechaSalida(); // Asume que esto es const y funciona bien
             incrementarIteraciones(); // Por calcular la fecha de salida
 
-            // Condición de Movimiento: Si la reserva ya terminó ANTES de la fecha de corte [cite: 142]
+            // Condición de Movimiento: Si la reserva ya terminó ANTES de la fecha de corte
             if (fechaSalidaRes < fechaCorte) {
                 std::cout << "Moviendo reserva " << (res->getCodigoReserva() ? res->getCodigoReserva() : "N/A")
                 << " a historico." << std::endl;
@@ -1284,7 +1284,7 @@ void SistemaUdeAStay::realizarActualizacionHistorico(Anfitrion* anfitrion) {
               << (listaReservasActivas ? listaReservasActivas->getTamano() : 0) << std::endl;
 
     // La parte de "actualiza las estructuras de datos para que permitan almacenar
-    // reservaciones en cualquier fecha de los próximos 12 meses" [cite: 142]
+    // reservaciones en cualquier fecha de los próximos 12 meses"
     // es una regla de negocio para cuando se crean NUEVAS reservas.
     // Se valida que la fecha de la nueva reserva no exceda fechaCorte + 12 meses.
     // No implica necesariamente redimensionar las ListaPersonalizada aquí, ya que son dinámicas.

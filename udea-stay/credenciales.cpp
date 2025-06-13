@@ -13,8 +13,8 @@ char* duplicarCString(const char* s) {
 
 Credenciales::Credenciales(const char* user, const char* pass) {
     nombreUsuario = duplicarCString(user);
-    // ¡ADVERTENCIA! Almacenar contraseñas en texto plano es inseguro.
-    // Esto es solo para propósitos del ejercicio. En un sistema real, se usaría un hash.
+
+
     password = duplicarCString(pass);
 }
 
@@ -48,6 +48,6 @@ bool Credenciales::verificarPassword(const char* passIntento) const {
 
 void Credenciales::mostrar() const {
     std::cout << "Usuario: " << (nombreUsuario ? nombreUsuario : "N/A") << std::endl;
-    // No imprimir la contraseña, incluso en depuración, es buena práctica.
-    // std::cout << "Password (simulado): " << (password ? password : "N/A") << std::endl;
+
+
 }

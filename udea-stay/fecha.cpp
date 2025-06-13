@@ -92,21 +92,4 @@ bool Fecha::operator>=(const Fecha& otra) const {
     return !(*this < otra); // Reutiliza operadores ya definidos
 }
 
-// Implementación de sumarDias (ejemplo conceptual básico):
-/*
-Fecha Fecha::sumarDias(int dias) const {
-    Fecha nuevaFecha = *this;
-    nuevaFecha.dia += dias;
-    // Aquí iría la lógica para ajustar mes y año si nuevaFecha.dia excede los días del mes
-    // Por ejemplo:
-    // while (nuevaFecha.dia > DIAS_EN_MES[nuevaFecha.mes-1]) { // Asumiendo DIAS_EN_MES es un array
-    //     nuevaFecha.dia -= DIAS_EN_MES[nuevaFecha.mes-1];
-    //     nuevaFecha.mes++;
-    //     if (nuevaFecha.mes > 12) {
-    //         nuevaFecha.mes = 1;
-    //         nuevaFecha.anio++;
-    //     }
-    // }
-    return nuevaFecha;
-}
-*/
+

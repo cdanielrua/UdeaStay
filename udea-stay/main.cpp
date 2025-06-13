@@ -1,13 +1,13 @@
 #include <iostream>
 #include "SistemaUdeAStay.h" // Incluye la clase principal que orquesta todo.
-    // Este header debería, a su vez, incluir o tener forward declarations
-    // para las otras clases que necesita (Anfitrion, Huesped, etc.)
-    // y para ListaPersonalizada.h, Fecha.h, Credenciales.h.
 
-// Si definiste duplicarCStringGlobal en un utils.h, podrías incluirlo aquí,
-// aunque es mejor que las clases que lo usan directamente lo incluyan o lo tengan definido.
-// Por ahora, asumimos que SistemaUdeAStay.h y sus dependencias lo manejan si es necesario
-// a nivel global, o que cada .cpp lo define/incluye según necesidad.
+
+
+
+
+
+
+
 
 int main() {
     // Mensaje de bienvenida opcional

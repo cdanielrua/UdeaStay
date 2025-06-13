@@ -134,12 +134,12 @@ bool Alojamiento::estaDisponible(const Fecha& fechaInicioDeseada, int numNochesD
         return numNochesDeseadas > 0;
     }
 
-    // ADVERTENCIA: La siguiente lógica de cálculo de fecha de fin y comparación de rangos es crucial
-    // y necesita una implementación robusta de la clase Fecha con aritmética de fechas (sumar días, comparaciones).
-    // La lógica actual es una simplificación extrema y NO ES COMPLETAMENTE CORRECTA.
 
-    // Fecha fechaFinDeseada = fechaInicioDeseada; // Variable no usada si no se implementa la suma
-    // fechaFinDeseada.dia += numNochesDeseadas; // Lógica incorrecta de suma de días, necesita mejorar en Fecha.h/.cpp
+
+
+
+
+
 
     for (int i = 0; i < referenciasAReservas->getTamano(); ++i) {
         Reserva* reservaExistente = referenciasAReservas->obtener(i);

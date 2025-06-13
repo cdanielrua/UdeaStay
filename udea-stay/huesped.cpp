@@ -5,10 +5,10 @@
 #include <iostream>   // Para mostrarInformacion
 #include <cstring>    // Para strcpy, strlen, strcmp
 
-// Asumiendo utils.h con duplicarCStringGlobal
-// Si no, define aquí char* Huesped::duplicarCString(const char* s) const { ... }
-// como se hizo en Anfitrion.cpp o incluye tu utilidad.
-// Para este ejemplo, usaré la idea de que duplicarCStringGlobal existe:
+
+
+
+
 char* duplicarCStringGlobal(const char* s); // Declaración si no está en un .h incluido globalmente
 
 // Constructor

@@ -201,14 +201,14 @@ bool Anfitrion::anularReservacionEnAlojamiento(const char* codigoReservacion, co
         std::cout << "INFO: Anfitrion " << nombreCompleto << " solicita anular reserva "
                   << codigoReservacion << " en alojamiento " << codigoAlojamiento << "." << std::endl;
         std::cout << "      (La logica final de anulacion estaria en SistemaUdeAStay o Alojamiento)" << std::endl;
-        // Placeholder:
-        // En un sistema real, buscarías la reserva en el alojamiento y la marcarías o eliminarías.
-        // El Alojamiento podría tener un método:
-        // bool exito = alojamientoEncontrado->anularReservaInterna(codigoReservacion);
-        // O el SistemaUdeAStay:
-        // bool exito = sistema->anularReservaGlobal(codigoReservacion, this);
-        // if (exito) { /* actualizar estado si es necesario */ }
-        // return exito;
+
+
+
+
+
+
+
+
         return true; // Simulación de éxito
     }
     return false; // Alojamiento no encontrado o no pertenece al anfitrión
@@ -238,15 +238,4 @@ void Anfitrion::mostrarInformacion() const {
     std::cout << "---------------------------------" << std::endl;
 }
 
-/*
-// Potencial sobrecarga de operadores
-bool Anfitrion::operator==(const Anfitrion& otro) const {
-    if (!numeroDocumento || !otro.numeroDocumento) return false;
-    return strcmp(numeroDocumento, otro.numeroDocumento) == 0;
-}
 
-// friend std::ostream& operator<<(std::ostream& os, const Anfitrion& anfitrion) {
-//     os << "Anfitrion: " << anfitrion.nombreCompleto << " (Doc: " << anfitrion.numeroDocumento << ")";
-//     return os;
-// }
-*/

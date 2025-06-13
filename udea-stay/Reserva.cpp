@@ -6,9 +6,9 @@
 #include <cstring>    // Para strcpy, strlen, strcmp
 #include <cstdio>     // Para sprintf en generarComprobante
 
-// Asumiendo utils.h con duplicarCStringGlobal
-// Si no, define aquí char* duplicarCStringGlobal(const char* s, int maxLength = 0);
-// donde maxLength puede ser usado para truncar o validar la longitud de anotacionesHuesped.
+
+
+
 char* duplicarCStringGlobal(const char* s); // Ya definido/asumido previamente
 
 
@@ -181,7 +181,7 @@ Fecha Reserva::calcularFechaSalida() const {
 char* Reserva::generarComprobante() const {
     // "código de la reserva (gestionada automáticamente), nombre del usuario,
     // código del alojamiento, la fecha de inicio y de finalización.
-    // Ambas fechas deben mostrarse en el formato: nombre Día, día "de" nombreMes "del" año." [cite: 243, 244, 245]
+    // Ambas fechas deben mostrarse en el formato: nombre Día, día "de" nombreMes "del" año."
 
     char* nombreHuesped = (huesped && huesped->getNombreCompleto()) ? duplicarCStringGlobal(huesped->getNombreCompleto()) : duplicarCStringGlobal("N/A");
     char* codigoAloj = (alojamiento && alojamiento->getCodigoIdentificador()) ? duplicarCStringGlobal(alojamiento->getCodigoIdentificador()) : duplicarCStringGlobal("N/A");

@@ -4,7 +4,7 @@
 class Credenciales {
 public:
     char* nombreUsuario;
-    char* password; // En un sistema real, sería un hash
+    char* password;
 
     Credenciales(const char* user = nullptr, const char* pass = nullptr);
     ~Credenciales();
